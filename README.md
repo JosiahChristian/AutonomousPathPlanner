@@ -2,7 +2,7 @@
 
 A high-performance computational autonomy pipeline implementing real-time obstacle avoidance and dynamic trajectory recalculation. This system models predictive vehicle kinematics across discrete coordinate spaces to navigate around incoming hazard grids safely.
 
-Targeted for robotics and autonomous navigation research alignment with the **Old Dominion University (ODU) PhD in Modeling and Simulation Engineering** pipeline.
+Targeted for robotics and autonomous navigation research in **Modeling and Simulation Engineering**.
 
 ## 🤖 Autonomy Software Architecture
 
