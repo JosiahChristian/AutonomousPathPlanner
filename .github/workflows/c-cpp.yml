@@ -1,0 +1,21 @@
+name: Autonomy Guidance Core Validation Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code Repository
+      uses: actions/checkout@v4
+
+    - name: Configure CMake Build Systems
+      run: cmake -B build -S .
+
+    - name: Compile Autopilot Guidance Binary
+      run: cmake --build build
