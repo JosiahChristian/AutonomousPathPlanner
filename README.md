@@ -4,6 +4,12 @@ A high-performance computational autonomy pipeline implementing real-time obstac
 
 Targeted for robotics and autonomous navigation research in **Modeling and Simulation Engineering**.
 
+## Live Visualizer
+
+[Launch Autonomous Path Planner Telemetry Visualizer](https://josiahchristian.github.io/AutonomousPathPlanner/)
+
+The browser-based visualizer presents the planner’s executed trajectory, radar obstacle location, evasive path translation, waypoint progression, collision-hazard state, and mission pipeline status.
+
 ## 🤖 Autonomy Software Architecture
 
 The software architecture enforces a clean, modular separation between the three fundamental stages of robotic autonomy:
@@ -39,7 +45,7 @@ Upon execution, the terminal engine will dynamically track tracking state update
 
 ```text
 ===============================================================
-     ODU CYBER-PHYSICAL AUTONOMOUS NAVIGATION PIPELINE         
+     CYBER-PHYSICAL AUTONOMOUS NAVIGATION PIPELINE         
 ===============================================================
 [PERCEPTION] Successfully mapped 1 dynamic radar obstacle coordinates.
 [PLANNING] Computing safe vector trajectory coordinates...
