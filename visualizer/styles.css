@@ -1,0 +1,279 @@
+:root {
+    --bg: #05070d;
+    --panel: #0b1220;
+    --panel-soft: #101827;
+    --border: #1f2b3d;
+
+    --text: #f8fafc;
+    --muted: #7c8da5;
+
+    --accent: #38bdf8;
+    --path: #4ade80;
+    --hazard: #f87171;
+    --warning: #facc15;
+    --vehicle: #a78bfa;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at top left, #0b1830 0%, transparent 36%),
+        var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.site-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 30px;
+
+    padding: 32px 40px 26px;
+    border-bottom: 1px solid var(--border);
+}
+
+h1,
+h2,
+p {
+    margin-top: 0;
+}
+
+h1 {
+    margin-bottom: 8px;
+    font-size: clamp(2rem, 4vw, 3.1rem);
+    letter-spacing: -0.04em;
+}
+
+h2 {
+    margin-bottom: 0;
+    font-size: 1.15rem;
+}
+
+.eyebrow {
+    margin-bottom: 8px;
+    color: var(--accent);
+    font-family: "Courier New", monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+}
+
+.subtitle {
+    max-width: 760px;
+    margin-bottom: 0;
+    color: var(--muted);
+    line-height: 1.6;
+}
+
+.system-status {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+
+    background: var(--panel);
+    color: var(--muted);
+
+    font-family: "Courier New", monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+
+    background: var(--path);
+    box-shadow: 0 0 12px var(--path);
+}
+
+.dashboard {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(330px, 0.55fr);
+    gap: 20px;
+
+    padding: 24px 40px 40px;
+}
+
+.card {
+    background: linear-gradient(
+        180deg,
+        rgba(16, 24, 39, 0.96),
+        rgba(8, 15, 27, 0.96)
+    );
+
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.card-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+
+    padding: 20px 22px;
+    border-bottom: 1px solid var(--border);
+}
+
+.stream-label {
+    padding: 6px 8px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+
+    color: var(--muted);
+    font-family: "Courier New", monospace;
+    font-size: 0.68rem;
+}
+
+.map-card {
+    padding-bottom: 20px;
+}
+
+canvas {
+    display: block;
+
+    width: calc(100% - 40px);
+    height: 560px;
+
+    margin: 20px;
+
+    background:
+        linear-gradient(
+            rgba(56, 189, 248, 0.045) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(56, 189, 248, 0.045) 1px,
+            transparent 1px
+        ),
+        #020617;
+
+    background-size: 32px 32px;
+
+    border: 1px solid var(--border);
+    border-radius: 6px;
+}
+
+.telemetry-card {
+    padding-bottom: 20px;
+}
+
+.metric-row {
+    margin: 18px 20px;
+    padding: 16px 16px 16px 18px;
+
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+
+    background: rgba(255, 255, 255, 0.018);
+}
+
+.metric-row.hazard {
+    border-left-color: var(--hazard);
+}
+
+.label {
+    display: block;
+    margin-bottom: 8px;
+
+    color: var(--muted);
+
+    font-family: "Courier New", monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+}
+
+.value {
+    display: block;
+
+    color: var(--accent);
+
+    font-family: "Courier New", monospace;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.metric-row.hazard .value {
+    color: var(--path);
+}
+
+.unit {
+    display: block;
+    margin-top: 5px;
+
+    color: #526176;
+
+    font-family: "Courier New", monospace;
+    font-size: 0.72rem;
+}
+
+.mission-registry {
+    margin: 26px 20px 0;
+    padding-top: 18px;
+
+    border-top: 1px solid var(--border);
+}
+
+.mission-row {
+    display: flex;
+    justify-content: space-between;
+
+    padding: 10px 0;
+
+    color: var(--muted);
+
+    font-family: "Courier New", monospace;
+    font-size: 0.76rem;
+
+    border-bottom: 1px solid rgba(31, 43, 61, 0.55);
+}
+
+.mission-row span:last-child {
+    color: var(--path);
+}
+
+footer {
+    padding: 0 40px 30px;
+
+    color: #46566d;
+
+    font-family: "Courier New", monospace;
+    font-size: 0.72rem;
+}
+
+@media (max-width: 950px) {
+    .site-header {
+        flex-direction: column;
+    }
+
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .site-header,
+    .dashboard,
+    footer {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    canvas {
+        height: 420px;
+    }
+}

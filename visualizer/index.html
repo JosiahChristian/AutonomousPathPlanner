@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Autonomous Path Planner Visualizer</title>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div>
+            <p class="eyebrow">AUTONOMOUS NAVIGATION</p>
+            <h1>Path Planner Telemetry Visualizer</h1>
+            <p class="subtitle">
+                Real-time visualization of obstacle detection,
+                evasive path translation, and waypoint execution.
+            </p>
+        </div>
+
+        <div class="system-status">
+            <span class="status-dot"></span>
+            PLANNER ONLINE
+        </div>
+    </header>
+
+    <main class="dashboard">
+
+        <section class="card map-card">
+            <div class="card-heading">
+                <div>
+                    <p class="eyebrow">NAVIGATION CANVAS</p>
+                    <h2>Executed Trajectory</h2>
+                </div>
+
+                <span class="stream-label">AUTONOMY-01</span>
+            </div>
+
+            <canvas
+                id="plannerCanvas"
+                width="900"
+                height="600">
+            </canvas>
+        </section>
+
+        <section class="card telemetry-card">
+            <div class="card-heading">
+                <div>
+                    <p class="eyebrow">PLANNER TELEMETRY</p>
+                    <h2>Mission State</h2>
+                </div>
+            </div>
+
+            <div class="metric-row">
+                <span class="label">Planner Mode</span>
+                <span id="mode-readout" class="value">INITIALIZING</span>
+            </div>
+
+            <div class="metric-row">
+                <span class="label">Current Waypoint</span>
+                <span id="waypoint-readout" class="value">0 / 13</span>
+            </div>
+
+            <div class="metric-row hazard">
+                <span class="label">Collision Hazard</span>
+                <span id="hazard-readout" class="value">CLEAR</span>
+            </div>
+
+            <div class="metric-row">
+                <span class="label">Obstacle Distance</span>
+                <span id="distance-readout" class="value">3.00</span>
+                <span class="unit">coordinate units</span>
+            </div>
+
+            <div class="mission-registry">
+                <p class="eyebrow">MISSION PIPELINE</p>
+
+                <div class="mission-row">
+                    <span>Perception</span>
+                    <span id="perception-state">ONLINE</span>
+                </div>
+
+                <div class="mission-row">
+                    <span>Planning</span>
+                    <span id="planning-state">STANDBY</span>
+                </div>
+
+                <div class="mission-row">
+                    <span>Control</span>
+                    <span id="control-state">STANDBY</span>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer>
+        AutonomousPathPlanner -> Telemetry Visualization Layer
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

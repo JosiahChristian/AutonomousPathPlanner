@@ -3,7 +3,7 @@
 
 int main() {
     std::cout << "===============================================================\n";
-    std::cout << "     ODU CYBER-PHYSICAL AUTONOMOUS NAVIGATION PIPELINE         \n";
+    std::cout << "     CYBER-PHYSICAL AUTONOMOUS NAVIGATION PIPELINE         \n";
     std::cout << "===============================================================\n";
 
     // Initialize: Start at (0,0) trying to steer cleanly to target endpoint (0, 10)
