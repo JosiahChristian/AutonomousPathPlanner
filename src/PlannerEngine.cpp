@@ -1,62 +1,65 @@
-#include "../include/PlannerEngine.hpp"
-#include <iostream>
-#include <cmath>
+#include "PlannerEngine.hpp"
 
-PlannerEngine::PlannerEngine(double startX, double startY, double targetX, double targetY) {
-    currentPos = {startX, startY};
-    targetPos = {targetX, targetY};
+#include <cmath>
+#include <stdexcept>
+
+PlannerEngine::PlannerEngine(Position start, Position target, PlannerConfig plannerConfig)
+    : startPos(start), targetPos(target), config(plannerConfig) {
+    if (config.stepSize <= 0.0) {
+        throw std::invalid_argument("stepSize must be greater than zero");
+    }
+    if (config.safetyRadius < 0.0) {
+        throw std::invalid_argument("safetyRadius cannot be negative");
+    }
+    if (config.maxIterations == 0) {
+        throw std::invalid_argument("maxIterations must be greater than zero");
+    }
 }
 
 void PlannerEngine::ingestObstacleMap(const std::vector<Position>& detectedObstacles) {
     obstacles = detectedObstacles;
-    std::cout << "[PERCEPTION] Successfully mapped " << obstacles.size() << " dynamic radar obstacle coordinates.\n";
 }
 
-bool PlannerEngine::isCollisionRisk(double checkX, double checkY, double safetyRadius) {
+bool PlannerEngine::isCollisionRisk(Position candidate) const {
     for (const auto& obs : obstacles) {
-        double distance = std::sqrt(std::pow(checkX - obs.x, 2) + std::pow(checkY - obs.y, 2));
-        if (distance < safetyRadius) return true;
+        const double distance = std::hypot(candidate.x - obs.x, candidate.y - obs.y);
+        if (distance < config.safetyRadius) {
+            return true;
+        }
     }
     return false;
 }
 
-std::vector<Position> PlannerEngine::calculateSafeTrajectory() {
-    std::vector<Position> trajectory;
-    trajectory.push_back(currentPos);
-    
-    double stepSize = 1.0;
-    double safetyZone = 1.5; // Meters around an obstacle
-    int iterations = 0;
+PlanResult PlannerEngine::calculateSafeTrajectory() const {
+    Position current = startPos;
+    PlanResult result{{current}, TerminationReason::IterationLimitReached};
 
-    std::cout << "[PLANNING] Computing safe vector trajectory coordinates...\n";
+    for (std::size_t iteration = 0; iteration < config.maxIterations; ++iteration) {
+        const double deltaX = targetPos.x - current.x;
+        const double deltaY = targetPos.y - current.y;
+        const double distanceToTarget = std::hypot(deltaX, deltaY);
 
-    while (iterations < 20) {
-        double deltaX = targetPos.x - currentPos.x;
-        double deltaY = targetPos.y - currentPos.y;
-        double distanceToTarget = std::sqrt(deltaX*deltaX + deltaY*deltaY);
-
-        if (distanceToTarget < stepSize) {
-            currentPos = targetPos;
-            trajectory.push_back(currentPos);
-            break;
+        if (distanceToTarget <= config.stepSize) {
+            result.trajectory.push_back(targetPos);
+            result.terminationReason = TerminationReason::TargetReached;
+            return result;
         }
 
-        // Calculate standard direct step trajectory
-        double nextX = currentPos.x + (deltaX / distanceToTarget) * stepSize;
-        double nextY = currentPos.y + (deltaY / distanceToTarget) * stepSize;
+        Position next{
+            current.x + (deltaX / distanceToTarget) * config.stepSize,
+            current.y + (deltaY / distanceToTarget) * config.stepSize
+        };
 
-        // Autonomy Guard Check: If direct path is blocked, execute defensive steering modification
-        if (isCollisionRisk(nextX, nextY, safetyZone)) {
-            std::cout << "[PLANNING] Collision hazard detected at (" << nextX << ", " << nextY << "). Initiating evasive vector path translation!\n";
-            // Steer 90-degrees perpendicular to dodge the obstacle bounding zone
-            nextX = currentPos.x - (deltaY / distanceToTarget) * stepSize;
-            nextY = currentPos.y + (deltaX / distanceToTarget) * stepSize;
+        if (isCollisionRisk(next)) {
+            next = {
+                current.x - (deltaY / distanceToTarget) * config.stepSize,
+                current.y + (deltaX / distanceToTarget) * config.stepSize
+            };
         }
 
-        currentPos = {nextX, nextY};
-        trajectory.push_back(currentPos);
-        iterations++;
+        current = next;
+        result.trajectory.push_back(current);
     }
 
-    return trajectory;
+    return result;
 }

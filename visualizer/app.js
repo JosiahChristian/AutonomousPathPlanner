@@ -29,7 +29,7 @@ const waypoints = [
 
 const obstacle = {
     x: 0.0,
-    y: 3.0,
+    y: 4.0,
     radius: 0.45
 };
 
@@ -162,7 +162,7 @@ function drawObstacle(width, height) {
     );
 
     ctx.fillText(
-        "(0, 3)",
+        "(0, 4)",
         p.x + 32,
         p.y + 12
     );

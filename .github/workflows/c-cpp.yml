@@ -14,8 +14,11 @@ jobs:
     - name: Checkout Code Repository
       uses: actions/checkout@v4
 
-    - name: Configure CMake Build Systems
-      run: cmake -B build -S .
+    - name: Configure CMake
+      run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON
 
-    - name: Compile Autopilot Guidance Binary
-      run: cmake --build build
+    - name: Build planner and tests
+      run: cmake --build build --config Release --parallel
+
+    - name: Run planner tests
+      run: ctest --test-dir build --build-config Release --output-on-failure
