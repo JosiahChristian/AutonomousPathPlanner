@@ -51,6 +51,22 @@ int main() {
             "segment collision check should prevent waypoint tunneling"
         );
 
+        PlannerEngine oneSided({0.0, 0.0}, {0.0, 5.0}, {.stepSize = 1.0, .safetyRadius = 0.75});
+        oneSided.ingestObstacleMap({{0.0, 1.0}, {-0.75, 0.0}});
+        const auto oneSidedPlan = oneSided.calculateSafeTrajectory();
+        require(oneSidedPlan.trajectory.size() > 1, "one-sided scenario should move");
+        require(oneSidedPlan.trajectory[1].x > 0.0, "planner should select the safe detour side");
+
+        PlannerEngine blocked({0.0, 0.0}, {0.0, 5.0}, {.stepSize = 1.0, .safetyRadius = 0.75});
+        blocked.ingestObstacleMap({{0.0, 1.0}, {-0.75, 0.0}, {0.75, 0.0}});
+        const auto blockedPlan = blocked.calculateSafeTrajectory();
+        require(!blockedPlan.reachedTarget(), "blocked scenario must not report success");
+        require(
+            blockedPlan.terminationReason == TerminationReason::NoSafeStep,
+            "blocked scenario should report no safe step"
+        );
+        require(blockedPlan.trajectory.size() == 1, "blocked plan must not append an unsafe waypoint");
+
         PlannerEngine limited({0.0, 0.0}, {0.0, 10.0}, {.stepSize = 1.0, .safetyRadius = 1.5, .maxIterations = 2});
         require(!limited.calculateSafeTrajectory().reachedTarget(), "limited plan should report incomplete termination");
 

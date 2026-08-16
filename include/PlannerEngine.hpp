@@ -17,6 +17,7 @@ struct PlannerConfig {
 
 enum class TerminationReason {
     TargetReached,
+    NoSafeStep,
     IterationLimitReached
 };
 

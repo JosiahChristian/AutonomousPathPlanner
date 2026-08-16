@@ -67,10 +67,36 @@ PlanResult PlannerEngine::calculateSafeTrajectory() const {
         };
 
         if (isCollisionRisk(current, next)) {
-            next = {
+            const Position leftDetour{
                 current.x - (deltaY / distanceToTarget) * config.stepSize,
                 current.y + (deltaX / distanceToTarget) * config.stepSize
             };
+            const Position rightDetour{
+                current.x + (deltaY / distanceToTarget) * config.stepSize,
+                current.y - (deltaX / distanceToTarget) * config.stepSize
+            };
+
+            const bool leftIsSafe = !isCollisionRisk(current, leftDetour);
+            const bool rightIsSafe = !isCollisionRisk(current, rightDetour);
+
+            if (!leftIsSafe && !rightIsSafe) {
+                result.terminationReason = TerminationReason::NoSafeStep;
+                return result;
+            }
+
+            if (leftIsSafe && rightIsSafe) {
+                const double leftDistance = std::hypot(
+                    targetPos.x - leftDetour.x,
+                    targetPos.y - leftDetour.y
+                );
+                const double rightDistance = std::hypot(
+                    targetPos.x - rightDetour.x,
+                    targetPos.y - rightDetour.y
+                );
+                next = leftDistance <= rightDistance ? leftDetour : rightDetour;
+            } else {
+                next = leftIsSafe ? leftDetour : rightDetour;
+            }
         }
 
         current = next;

@@ -21,7 +21,8 @@ The project is deliberately scoped as an engineering demonstration rather than a
 - Euclidean collision-risk evaluation
 - Segment-level clearance checks that prevent waypoint tunneling
 - Reactive evasive steering
-- Explicit target-reached or iteration-limit termination state
+- Two-sided detour evaluation with collision validation
+- Explicit target-reached, blocked, or iteration-limit termination state
 - Repeatable planning calls with no hidden state mutation
 - Native C++ tests integrated with CTest
 - Interactive HTML5 Canvas mission visualization
@@ -55,7 +56,7 @@ cmake --build build --parallel
 ctest --test-dir build --output-on-failure
 ```
 
-The suite covers direct completion, obstacle avoidance, safety clearance, deterministic reuse, and iteration-limit reporting. GitHub Actions builds and runs these checks on every push and pull request to `main`.
+The suite covers direct completion, obstacle avoidance, safety clearance, waypoint tunneling, safe-side selection, blocked scenarios, deterministic reuse, and iteration-limit reporting. GitHub Actions builds and runs these checks on every push and pull request to `main`.
 
 ## Configuration example
 

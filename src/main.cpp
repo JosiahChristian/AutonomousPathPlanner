@@ -24,7 +24,10 @@ int main() {
     }
     std::cout << "---------------------------------------------------------------\n";
     if (!plan.reachedTarget()) {
-        std::cerr << "Planner stopped before reaching the target: iteration limit reached.\n";
+        const char* reason = plan.terminationReason == TerminationReason::NoSafeStep
+            ? "no collision-free next step"
+            : "iteration limit reached";
+        std::cerr << "Planner stopped before reaching the target: " << reason << ".\n";
         return 1;
     }
 
