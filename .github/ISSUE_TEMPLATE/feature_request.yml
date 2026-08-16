@@ -1,0 +1,34 @@
+name: Engineering proposal
+description: Propose a focused planner, validation, or visualization improvement
+title: "[Proposal]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Describe the engineering limitation or user need.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: Explain the interface, algorithm, or workflow change.
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation strategy
+      description: Identify tests, metrics, baselines, or failure cases needed to support the change.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope and tradeoffs
+      description: Note compatibility, complexity, performance, or safety implications.
+    validations:
+      required: true

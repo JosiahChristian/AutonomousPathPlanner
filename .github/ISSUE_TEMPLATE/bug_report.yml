@@ -1,0 +1,54 @@
+name: Planner defect
+description: Report reproducible incorrect or unsafe planner behavior
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for helping improve AutonomousPathPlanner. Do not use this form for private security reports.
+  - type: input
+    id: revision
+    attributes:
+      label: Revision
+      description: Commit SHA or release where the behavior occurs.
+      placeholder: 7494163
+    validations:
+      required: true
+  - type: textarea
+    id: scenario
+    attributes:
+      label: Scenario
+      description: Provide start, target, planner configuration, and all obstacle coordinates.
+      placeholder: "start=(0,0), target=(0,10), stepSize=1.0, safetyRadius=1.5, obstacles=[(0,4)]"
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: Observed result
+      description: Include termination state, trajectory, metrics, and relevant output.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      description: Include compiler, operating system, build commands, and the smallest reliable reproduction.
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submission checks
+      options:
+        - label: I verified this against the latest `main` branch.
+          required: true
+        - label: This report does not contain private vulnerability details.
+          required: true
