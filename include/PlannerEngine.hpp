@@ -45,7 +45,7 @@ private:
     PlannerConfig config;
     std::vector<Position> obstacles;
 
-    [[nodiscard]] bool isCollisionRisk(Position candidate) const;
+    [[nodiscard]] bool isCollisionRisk(Position from, Position to) const;
 };
 
 #endif

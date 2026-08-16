@@ -38,6 +38,19 @@ int main() {
         }
         require(deviated, "blocked plan should deviate from direct centerline");
 
+        PlannerEngine coarseStep(
+            {0.0, 0.0},
+            {0.0, 10.0},
+            {.stepSize = 4.0, .safetyRadius = 1.0, .maxIterations = 20}
+        );
+        coarseStep.ingestObstacleMap({{0.0, 2.0}});
+        const auto coarsePlan = coarseStep.calculateSafeTrajectory();
+        require(coarsePlan.trajectory.size() > 1, "coarse plan should generate a movement");
+        require(
+            !nearlyEqual(coarsePlan.trajectory[1].x, 0.0),
+            "segment collision check should prevent waypoint tunneling"
+        );
+
         PlannerEngine limited({0.0, 0.0}, {0.0, 10.0}, {.stepSize = 1.0, .safetyRadius = 1.5, .maxIterations = 2});
         require(!limited.calculateSafeTrajectory().reachedTarget(), "limited plan should report incomplete termination");
 

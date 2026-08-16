@@ -1,5 +1,6 @@
 #include "PlannerEngine.hpp"
 
+#include <algorithm>
 #include <cmath>
 #include <stdexcept>
 
@@ -20,9 +21,24 @@ void PlannerEngine::ingestObstacleMap(const std::vector<Position>& detectedObsta
     obstacles = detectedObstacles;
 }
 
-bool PlannerEngine::isCollisionRisk(Position candidate) const {
+bool PlannerEngine::isCollisionRisk(Position from, Position to) const {
+    const double segmentX = to.x - from.x;
+    const double segmentY = to.y - from.y;
+    const double segmentLengthSquared = segmentX * segmentX + segmentY * segmentY;
+
     for (const auto& obs : obstacles) {
-        const double distance = std::hypot(candidate.x - obs.x, candidate.y - obs.y);
+        double projection = 0.0;
+        if (segmentLengthSquared > 0.0) {
+            projection = ((obs.x - from.x) * segmentX + (obs.y - from.y) * segmentY)
+                / segmentLengthSquared;
+            projection = std::clamp(projection, 0.0, 1.0);
+        }
+
+        const Position closest{
+            from.x + projection * segmentX,
+            from.y + projection * segmentY
+        };
+        const double distance = std::hypot(closest.x - obs.x, closest.y - obs.y);
         if (distance < config.safetyRadius) {
             return true;
         }
@@ -50,7 +66,7 @@ PlanResult PlannerEngine::calculateSafeTrajectory() const {
             current.y + (deltaY / distanceToTarget) * config.stepSize
         };
 
-        if (isCollisionRisk(next)) {
+        if (isCollisionRisk(current, next)) {
             next = {
                 current.x - (deltaY / distanceToTarget) * config.stepSize,
                 current.y + (deltaX / distanceToTarget) * config.stepSize

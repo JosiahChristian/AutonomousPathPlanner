@@ -19,6 +19,7 @@ The project is deliberately scoped as an engineering demonstration rather than a
 - Deterministic 2D waypoint generation
 - Configurable step size, obstacle safety radius, and iteration limit
 - Euclidean collision-risk evaluation
+- Segment-level clearance checks that prevent waypoint tunneling
 - Reactive evasive steering
 - Explicit target-reached or iteration-limit termination state
 - Repeatable planning calls with no hidden state mutation
@@ -82,7 +83,7 @@ These boundaries keep the repository honest and make the next engineering steps 
 
 ## Roadmap
 
-- Add segment-level collision checks and multiple-obstacle regression cases
+- Add multiple-obstacle regression cases and clearance metrics
 - Introduce structured scenario input and trajectory output
 - Compare A*, RRT/RRT*, and optimization-based strategies
 - Measure path length, clearance, runtime, and completion rate
