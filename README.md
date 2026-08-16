@@ -51,6 +51,14 @@ cmake --build build --parallel
 ./build/run_planner
 ```
 
+With CMake and Ninja installed, the equivalent preset workflow is:
+
+```bash
+cmake --preset development
+cmake --build --preset development
+ctest --preset development
+```
+
 Machine-readable output for integrations is available with:
 
 ```bash
@@ -111,6 +119,8 @@ tests/         Native behavior tests
 visualizer/    GitHub Pages telemetry visualization
 .github/       CI and Pages deployment workflows
 ```
+
+See [Architecture](docs/architecture.md) for component boundaries, invariants, and extension points. Release-facing changes are tracked in the [changelog](CHANGELOG.md).
 
 ## License
 

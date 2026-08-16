@@ -1,0 +1,56 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 22,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "development",
+      "displayName": "Development",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/development",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "BUILD_TESTING": "ON"
+      }
+    },
+    {
+      "name": "release",
+      "displayName": "Release",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "BUILD_TESTING": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "development",
+      "configurePreset": "development"
+    },
+    {
+      "name": "release",
+      "configurePreset": "release"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "development",
+      "configurePreset": "development",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "release",
+      "configurePreset": "release",
+      "output": {
+        "outputOnFailure": true
+      }
+    }
+  ]
+}
