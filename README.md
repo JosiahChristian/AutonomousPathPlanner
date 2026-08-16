@@ -115,3 +115,5 @@ visualizer/    GitHub Pages telemetry visualization
 ## License
 
 This project is available under the [MIT License](LICENSE).
+
+Contributions are welcome through the workflow in [CONTRIBUTING.md](CONTRIBUTING.md). Potential vulnerabilities should be reported according to [SECURITY.md](SECURITY.md).

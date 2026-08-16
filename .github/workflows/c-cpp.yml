@@ -9,6 +9,13 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [g++, clang++]
+
+    env:
+      CXX: ${{ matrix.compiler }}
 
     steps:
     - name: Checkout Code Repository
@@ -22,3 +29,27 @@ jobs:
 
     - name: Run planner tests
       run: ctest --test-dir build --build-config Release --output-on-failure
+
+    - name: Verify generated visualizer scenario
+      run: |
+        ./build/run_planner --json > /tmp/generated-scenario.json
+        diff --unified visualizer/scenario.json /tmp/generated-scenario.json
+
+  sanitizers:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code Repository
+      uses: actions/checkout@v4
+
+    - name: Configure sanitizer build
+      env:
+        CXXFLAGS: -fsanitize=address,undefined -fno-omit-frame-pointer
+        LDFLAGS: -fsanitize=address,undefined
+      run: cmake -S . -B build-sanitized -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=ON
+
+    - name: Build with sanitizers
+      run: cmake --build build-sanitized --parallel
+
+    - name: Run sanitizer tests
+      run: ctest --test-dir build-sanitized --output-on-failure
