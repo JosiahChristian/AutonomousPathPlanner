@@ -51,6 +51,14 @@ cmake --build build --parallel
 ./build/run_planner
 ```
 
+Machine-readable output for integrations is available with:
+
+```bash
+./build/run_planner --json
+```
+
+The checked-in `visualizer/scenario.json` is generated from this contract and loaded by the GitHub Pages interface. The embedded JavaScript scenario remains only as an offline fallback.
+
 ## Test
 
 ```bash
@@ -81,14 +89,14 @@ const PlanResult plan = planner.calculateSafeTrajectory();
 - Static obstacles and a single planning agent
 - Reactive steering rather than globally optimal search
 - No vehicle dynamics, uncertainty model, or kinodynamic constraints
-- Visualization uses a representative fixed scenario rather than live C++ output
+- Browser deployment consumes a generated C++ scenario snapshot rather than executing native C++ live
 
 These boundaries keep the repository honest and make the next engineering steps measurable.
 
 ## Roadmap
 
 - Add multiple-obstacle regression cases and clearance metrics
-- Introduce structured scenario input and trajectory output
+- Introduce structured scenario input and dynamic scenario selection
 - Compare A*, RRT/RRT*, and optimization-based strategies
 - Measure path length, clearance, runtime, and completion rate
 - Connect generated planner output to the visualization layer

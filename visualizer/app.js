@@ -10,7 +10,7 @@ const perceptionState = document.getElementById("perception-state");
 const planningState = document.getElementById("planning-state");
 const controlState = document.getElementById("control-state");
 
-const waypoints = [
+let waypoints = [
     { x: 0.0, y: 0.0 },
     { x: 0.0, y: 1.0 },
     { x: 0.0, y: 2.0 },
@@ -28,7 +28,7 @@ const waypoints = [
     { x: 0.0, y: 10.0 }
 ];
 
-const obstacle = {
+let obstacle = {
     x: 0.0,
     y: 4.0,
     radius: 0.45
@@ -38,6 +38,38 @@ let currentWaypoint = 0;
 let progress = 0;
 let lastTimestamp = null;
 let missionComplete = false;
+
+async function loadScenario() {
+    try {
+        const response = await fetch("scenario.json", { cache: "no-store" });
+        if (!response.ok) throw new Error(`scenario request failed: ${response.status}`);
+        const scenario = await response.json();
+        if (!Array.isArray(scenario.trajectory) || scenario.trajectory.length < 2) {
+            throw new Error("scenario trajectory is invalid");
+        }
+
+        waypoints = scenario.trajectory;
+        if (Array.isArray(scenario.obstacles) && scenario.obstacles.length > 0) {
+            obstacle = { ...obstacle, ...scenario.obstacles[0] };
+        }
+
+        const metrics = scenario.metrics || {};
+        const pathLength = document.getElementById("path-length");
+        const minimumClearance = document.getElementById("minimum-clearance");
+        const evasiveManeuvers = document.getElementById("evasive-maneuvers");
+        if (pathLength && Number.isFinite(metrics.pathLength)) {
+            pathLength.textContent = `${metrics.pathLength.toFixed(2)} units`;
+        }
+        if (minimumClearance && Number.isFinite(metrics.minimumClearance)) {
+            minimumClearance.textContent = `${metrics.minimumClearance.toFixed(2)} units`;
+        }
+        if (evasiveManeuvers && Number.isInteger(metrics.evasiveManeuvers)) {
+            evasiveManeuvers.textContent = metrics.evasiveManeuvers.toString();
+        }
+    } catch (error) {
+        console.warn("Using embedded planner scenario fallback.", error);
+    }
+}
 
 function resizeCanvas() {
     if (!canvas || !ctx) return;
@@ -398,5 +430,5 @@ if (canvas && ctx) {
         resizeCanvas
     );
 
-    requestAnimationFrame(render);
+    loadScenario().finally(() => requestAnimationFrame(render));
 }

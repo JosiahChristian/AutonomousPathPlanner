@@ -20,4 +20,8 @@ if(BUILD_TESTING)
     add_executable(planner_tests tests/PlannerEngineTests.cpp)
     target_link_libraries(planner_tests PRIVATE planner_engine)
     add_test(NAME planner_engine_tests COMMAND planner_tests)
+    add_test(NAME planner_json_output COMMAND run_planner --json)
+    set_tests_properties(planner_json_output PROPERTIES
+        PASS_REGULAR_EXPRESSION "\"status\": \"target_reached\""
+    )
 endif()
