@@ -1,69 +1,67 @@
-# AutonomousPathPlanner: Algorithmic Obstacle Avoidance Engine
+# AutonomousPathPlanner
 
-A high-performance computational autonomy pipeline implementing real-time obstacle avoidance and dynamic trajectory recalculation. This system models predictive vehicle kinematics across discrete coordinate spaces to navigate around incoming hazard grids safely.
+C++ autonomous navigation software for geometric collision evaluation, obstacle avoidance, and dynamic trajectory modification.
 
-Targeted for robotics and autonomous navigation research in **Modeling and Simulation Engineering**.
+## Overview
 
-## Live Visualizer
+AutonomousPathPlanner implements a compact perception-to-planning workflow for autonomous navigation. The planner ingests obstacle coordinates, evaluates the proposed path for collision risk, and modifies its trajectory when the direct route intersects an obstacle safety region.
 
-[Launch Autonomous Path Planner Telemetry Visualizer](https://josiahchristian.github.io/AutonomousPathPlanner/)
+The native C++ planner remains separate from the browser-based visualization layer so algorithmic logic and presentation can evolve independently.
 
-The browser-based visualizer presents the planner’s executed trajectory, radar obstacle location, evasive path translation, waypoint progression, collision-hazard state, and mission pipeline status.
+## Core Capabilities
 
-## 🤖 Autonomy Software Architecture
+- Obstacle-map ingestion
+- Geometric collision-risk evaluation
+- Direct trajectory generation
+- Dynamic evasive steering
+- Configurable obstacle safety radius
+- Modular C++ planning components
+- CMake-based builds
+- Interactive browser visualization
 
-The software architecture enforces a clean, modular separation between the three fundamental stages of robotic autonomy:
+## Architecture
 
-1. **Perception Stage:** Ingests dynamic, low-latency array matrices simulating incoming LiDAR/Radar distance spatial sensor coordinates.
-2. **Planning Stage:** Evaluates direct vector paths against a configurable localized safety bounding perimeter zone (\(r_{safety} = 1.5\text{m}\)). If a proximity conflict intersect is detected, the engine executes a 90° perpendicular matrix translation maneuver to bypass the obstacle.
-3. **Control Stage:** Outputs the stabilized, updated waypoint trajectory map tracking parameters natively to the hardware execution register layer.
+Environment / Obstacles
+          |
+     Obstacle Map
+          |
+    Planner Engine
+          |
+ Collision Evaluation
+          |
+ Trajectory Adjustment
+          |
+     Safe Path
+          |
+    Visualization
 
-## 🛠️ Local Compilation & Deployment
+## Technology
 
-The codebase is engineered using standard, modern C++ patterns, ensuring clean compilation across multiple operating system environments without external library dependencies.
+**Core:** C++  
+**Build:** CMake  
+**Algorithms:** Euclidean geometry, collision evaluation, trajectory planning  
+**Visualization:** JavaScript, HTML5 Canvas  
+**Domain:** autonomous systems, robotics, navigation
 
-### Prerequisites
-* CMake 3.22+
-* C++17 Compliant Compiler (GCC / MinGW / Clang)
+## Planner Behavior
 
-### Execution Blueprint
-Build and compile the native binary executables directly within your local PowerShell or terminal console workspace:
+The planner begins with a direct step toward the target. Before accepting each step, it checks the proposed coordinate against the configured obstacle safety radius.
 
-```bash
-# 1. Configure the build environment using the local Make toolchain
-cmake -B build -S . -G "MinGW Makefiles" -DCMAKE_CXX_COMPILER=g++ -DCMAKE_MAKE_PROGRAM=make
+If the direct step creates a collision risk, the planner applies a perpendicular steering adjustment and continues trajectory generation from the modified position.
 
-# 2. Compile the binaries to 100% completion
-cmake --build build
+## Build
 
-# 3. Launch the autonomous autopilot routing application
-.\build\run_planner.exe
-```
+    cmake -S . -B build
+    cmake --build build
 
-## 📊 Expected Terminal Output Simulation Log
-Upon execution, the terminal engine will dynamically track tracking state updates across spatial nodes:
+## Design Priorities
 
-```text
-===============================================================
-     CYBER-PHYSICAL AUTONOMOUS NAVIGATION PIPELINE         
-===============================================================
-[PERCEPTION] Successfully mapped 1 dynamic radar obstacle coordinates.
-[PLANNING] Computing safe vector trajectory coordinates...
-[PLANNING] Collision hazard detected at (0, 3). Initiating evasive vector path translation!
-[PLANNING] Collision hazard detected at (-0.875965, 2.99228). Initiating evasive vector path translation!
+The project keeps obstacle representation, collision reasoning, planning behavior, and visualization conceptually separated.
 
-[CONTROL] Streaming Executed Trajectory Path Coordinates:
----------------------------------------------------------------
-Waypoint 00 | Latitude Position Coordinate: (0, 0)
-Waypoint 01 | Latitude Position Coordinate: (0, 1)
-Waypoint 02 | Latitude Position Coordinate: (0, 2)
-Waypoint 03 | Latitude Position Coordinate: (-1, 2)
-Waypoint 04 | Latitude Position Coordinate: (-1.99, 2.12)
-...
-Waypoint 13 | Latitude Position Coordinate: (0, 10)
----------------------------------------------------------------
-Target intercept accomplished safely. Mission lifecycle complete.
-```
+Continued engineering work will prioritize deterministic planning tests, edge-case handling, stronger trajectory validation, performance measurement, and richer planning strategies before expanding the interface surface.
 
-## 🛠️ Portfolio Mapping
-This codebase anchors the robotics and control-systems track of a multi-domain software portfolio, demonstrating core software competencies in spatial geometry transforms, defensive pathing algorithms, and native C++ systems programming.
+## Live Visualization
+
+[Launch the AutonomousPathPlanner visualizer](https://josiahchristian.github.io/AutonomousPathPlanner/)
+
+The browser visualizer provides an interactive view of planner behavior while the C++ implementation remains the primary planning engine.
