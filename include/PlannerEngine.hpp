@@ -18,6 +18,8 @@ struct PlannerConfig {
 
 enum class TerminationReason {
     TargetReached,
+    StartInCollision,
+    TargetInCollision,
     NoSafeStep,
     IterationLimitReached
 };

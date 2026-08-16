@@ -24,7 +24,7 @@ The project is deliberately scoped as an engineering demonstration rather than a
 - Two-sided detour evaluation with collision validation
 - Collision validation on every segment, including final target approach
 - Rejection of non-finite scenario and configuration values
-- Explicit target-reached, blocked, or iteration-limit termination state
+- Explicit success, occupied-endpoint, blocked, or iteration-limit termination state
 - Path length, minimum-clearance, and evasive-maneuver metrics
 - Repeatable planning calls with no hidden state mutation
 - Native C++ tests integrated with CTest
@@ -75,7 +75,7 @@ cmake --build build --parallel
 ctest --test-dir build --output-on-failure
 ```
 
-The suite covers direct completion, obstacle avoidance, safety clearance, metric correctness, waypoint tunneling, final-approach validation, safe-side selection, blocked scenarios, invalid input, deterministic reuse, and iteration-limit reporting. GitHub Actions builds and runs these checks on every push and pull request to `main`.
+The suite covers direct completion, obstacle avoidance, occupied endpoints, safety clearance, metric correctness, waypoint tunneling, final-approach validation, safe-side selection, blocked scenarios, invalid input, deterministic reuse, and iteration-limit reporting. GitHub Actions builds and runs these checks on every push and pull request to `main`.
 
 ## Configuration example
 

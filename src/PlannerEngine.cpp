@@ -65,6 +65,16 @@ PlanResult PlannerEngine::calculateSafeTrajectory() const {
     Position current = startPos;
     PlanResult result{{current}, TerminationReason::IterationLimitReached};
 
+    if (isCollisionRisk(startPos, startPos)) {
+        result.terminationReason = TerminationReason::StartInCollision;
+        result.minimumClearance = segmentClearance(startPos, startPos);
+        return result;
+    }
+    if (isCollisionRisk(targetPos, targetPos)) {
+        result.terminationReason = TerminationReason::TargetInCollision;
+        result.minimumClearance = segmentClearance(targetPos, targetPos);
+        return result;
+    }
     if (current.x == targetPos.x && current.y == targetPos.y) {
         result.terminationReason = TerminationReason::TargetReached;
         return result;

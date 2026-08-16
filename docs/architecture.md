@@ -28,6 +28,7 @@ AutonomousPathPlanner is a deterministic two-dimensional reactive planner. It ac
 ## Safety invariants
 
 - Every accepted segment must meet the configured obstacle safety radius.
+- Occupied start and target positions produce distinct termination states.
 - An unsafe waypoint is never appended to the result.
 - A blocked local configuration is reported explicitly rather than represented as success.
 - Non-finite positions and configuration values are rejected before planning.

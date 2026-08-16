@@ -10,6 +10,10 @@ const char* terminationName(TerminationReason reason) {
     switch (reason) {
     case TerminationReason::TargetReached:
         return "target_reached";
+    case TerminationReason::StartInCollision:
+        return "start_in_collision";
+    case TerminationReason::TargetInCollision:
+        return "target_in_collision";
     case TerminationReason::NoSafeStep:
         return "no_safe_step";
     case TerminationReason::IterationLimitReached:
@@ -74,9 +78,7 @@ int main(int argc, char* argv[]) {
     std::cout << "Minimum obstacle clearance: " << plan.minimumClearance << " coordinate units\n";
     std::cout << "Evasive maneuvers: " << plan.evasiveManeuvers << '\n';
     if (!plan.reachedTarget()) {
-        const char* reason = plan.terminationReason == TerminationReason::NoSafeStep
-            ? "no collision-free next step"
-            : "iteration limit reached";
+        const char* reason = terminationName(plan.terminationReason);
         std::cerr << "Planner stopped before reaching the target: " << reason << ".\n";
         return 1;
     }

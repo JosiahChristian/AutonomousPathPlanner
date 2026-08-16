@@ -78,6 +78,22 @@ int main() {
         );
         require(blockedPlan.trajectory.size() == 1, "blocked plan must not append an unsafe waypoint");
 
+        PlannerEngine invalidStart({0.0, 0.0}, {0.0, 5.0}, {.safetyRadius = 1.0});
+        invalidStart.ingestObstacleMap({{0.25, 0.0}});
+        const auto invalidStartPlan = invalidStart.calculateSafeTrajectory();
+        require(
+            invalidStartPlan.terminationReason == TerminationReason::StartInCollision,
+            "occupied start should be reported explicitly"
+        );
+
+        PlannerEngine invalidTarget({0.0, 0.0}, {0.0, 5.0}, {.safetyRadius = 1.0});
+        invalidTarget.ingestObstacleMap({{0.25, 5.0}});
+        const auto invalidTargetPlan = invalidTarget.calculateSafeTrajectory();
+        require(
+            invalidTargetPlan.terminationReason == TerminationReason::TargetInCollision,
+            "occupied target should be reported explicitly"
+        );
+
         PlannerEngine guardedEndpoint(
             {0.0, 0.0},
             {0.0, 0.5},
