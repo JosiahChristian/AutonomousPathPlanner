@@ -3,13 +3,16 @@
 #include <algorithm>
 #include <cmath>
 #include <stdexcept>
+#include <string>
 
 PlannerEngine::PlannerEngine(Position start, Position target, PlannerConfig plannerConfig)
     : startPos(start), targetPos(target), config(plannerConfig) {
-    if (config.stepSize <= 0.0) {
+    validatePosition(startPos, "start");
+    validatePosition(targetPos, "target");
+    if (!std::isfinite(config.stepSize) || config.stepSize <= 0.0) {
         throw std::invalid_argument("stepSize must be greater than zero");
     }
-    if (config.safetyRadius < 0.0) {
+    if (!std::isfinite(config.safetyRadius) || config.safetyRadius < 0.0) {
         throw std::invalid_argument("safetyRadius cannot be negative");
     }
     if (config.maxIterations == 0) {
@@ -18,7 +21,16 @@ PlannerEngine::PlannerEngine(Position start, Position target, PlannerConfig plan
 }
 
 void PlannerEngine::ingestObstacleMap(const std::vector<Position>& detectedObstacles) {
+    for (const auto& obstacle : detectedObstacles) {
+        validatePosition(obstacle, "obstacle");
+    }
     obstacles = detectedObstacles;
+}
+
+void PlannerEngine::validatePosition(Position position, const char* fieldName) {
+    if (!std::isfinite(position.x) || !std::isfinite(position.y)) {
+        throw std::invalid_argument(std::string(fieldName) + " coordinates must be finite");
+    }
 }
 
 bool PlannerEngine::isCollisionRisk(Position from, Position to) const {
@@ -50,21 +62,23 @@ PlanResult PlannerEngine::calculateSafeTrajectory() const {
     Position current = startPos;
     PlanResult result{{current}, TerminationReason::IterationLimitReached};
 
+    if (current.x == targetPos.x && current.y == targetPos.y) {
+        result.terminationReason = TerminationReason::TargetReached;
+        return result;
+    }
+
     for (std::size_t iteration = 0; iteration < config.maxIterations; ++iteration) {
         const double deltaX = targetPos.x - current.x;
         const double deltaY = targetPos.y - current.y;
         const double distanceToTarget = std::hypot(deltaX, deltaY);
 
-        if (distanceToTarget <= config.stepSize) {
-            result.trajectory.push_back(targetPos);
-            result.terminationReason = TerminationReason::TargetReached;
-            return result;
-        }
-
-        Position next{
-            current.x + (deltaX / distanceToTarget) * config.stepSize,
-            current.y + (deltaY / distanceToTarget) * config.stepSize
-        };
+        const bool targetWithinStep = distanceToTarget <= config.stepSize;
+        Position next = targetWithinStep
+            ? targetPos
+            : Position{
+                current.x + (deltaX / distanceToTarget) * config.stepSize,
+                current.y + (deltaY / distanceToTarget) * config.stepSize
+            };
 
         if (isCollisionRisk(current, next)) {
             const Position leftDetour{
@@ -101,6 +115,11 @@ PlanResult PlannerEngine::calculateSafeTrajectory() const {
 
         current = next;
         result.trajectory.push_back(current);
+
+        if (targetWithinStep && current.x == targetPos.x && current.y == targetPos.y) {
+            result.terminationReason = TerminationReason::TargetReached;
+            return result;
+        }
     }
 
     return result;

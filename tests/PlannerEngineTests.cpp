@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <limits>
 #include <stdexcept>
 
 namespace {
@@ -23,6 +24,11 @@ int main() {
         require(directPlan.reachedTarget(), "direct plan should reach target");
         require(directPlan.trajectory.size() == 4, "direct plan should contain four positions");
         require(nearlyEqual(directPlan.trajectory.back().y, 3.0), "direct plan target mismatch");
+
+        PlannerEngine alreadyAtTarget({2.0, 3.0}, {2.0, 3.0});
+        const auto stationaryPlan = alreadyAtTarget.calculateSafeTrajectory();
+        require(stationaryPlan.reachedTarget(), "stationary plan should report target reached");
+        require(stationaryPlan.trajectory.size() == 1, "stationary plan should not duplicate its position");
 
         PlannerEngine avoidance({0.0, 0.0}, {0.0, 10.0});
         avoidance.ingestObstacleMap({{0.0, 4.0}});
@@ -66,6 +72,29 @@ int main() {
             "blocked scenario should report no safe step"
         );
         require(blockedPlan.trajectory.size() == 1, "blocked plan must not append an unsafe waypoint");
+
+        PlannerEngine guardedEndpoint(
+            {0.0, 0.0},
+            {0.0, 0.5},
+            {.stepSize = 1.0, .safetyRadius = 0.2, .maxIterations = 1}
+        );
+        guardedEndpoint.ingestObstacleMap({{0.0, 0.25}});
+        const auto guardedEndpointPlan = guardedEndpoint.calculateSafeTrajectory();
+        require(
+            !guardedEndpointPlan.reachedTarget(),
+            "final target segment must receive collision validation"
+        );
+
+        bool rejectedInvalidCoordinate = false;
+        try {
+            PlannerEngine invalid(
+                {std::numeric_limits<double>::quiet_NaN(), 0.0},
+                {1.0, 1.0}
+            );
+        } catch (const std::invalid_argument&) {
+            rejectedInvalidCoordinate = true;
+        }
+        require(rejectedInvalidCoordinate, "planner should reject non-finite coordinates");
 
         PlannerEngine limited({0.0, 0.0}, {0.0, 10.0}, {.stepSize = 1.0, .safetyRadius = 1.5, .maxIterations = 2});
         require(!limited.calculateSafeTrajectory().reachedTarget(), "limited plan should report incomplete termination");

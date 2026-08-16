@@ -46,6 +46,7 @@ private:
     PlannerConfig config;
     std::vector<Position> obstacles;
 
+    static void validatePosition(Position position, const char* fieldName);
     [[nodiscard]] bool isCollisionRisk(Position from, Position to) const;
 };
 
