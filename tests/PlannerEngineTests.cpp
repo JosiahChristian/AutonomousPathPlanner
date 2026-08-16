@@ -24,6 +24,8 @@ int main() {
         require(directPlan.reachedTarget(), "direct plan should reach target");
         require(directPlan.trajectory.size() == 4, "direct plan should contain four positions");
         require(nearlyEqual(directPlan.trajectory.back().y, 3.0), "direct plan target mismatch");
+        require(nearlyEqual(directPlan.pathLength, 3.0), "direct plan length mismatch");
+        require(directPlan.evasiveManeuvers == 0, "direct plan should not report avoidance");
 
         PlannerEngine alreadyAtTarget({2.0, 3.0}, {2.0, 3.0});
         const auto stationaryPlan = alreadyAtTarget.calculateSafeTrajectory();
@@ -36,6 +38,9 @@ int main() {
         const auto secondPlan = avoidance.calculateSafeTrajectory();
         require(firstPlan.reachedTarget(), "avoidance plan should reach target");
         require(firstPlan.trajectory.size() == secondPlan.trajectory.size(), "planner should be repeatable");
+        require(firstPlan.pathLength > 10.0, "avoidance path should exceed direct distance");
+        require(firstPlan.minimumClearance >= 1.5, "avoidance metrics should preserve clearance");
+        require(firstPlan.evasiveManeuvers > 0, "avoidance plan should report evasive maneuvers");
 
         bool deviated = false;
         for (const auto& point : firstPlan.trajectory) {

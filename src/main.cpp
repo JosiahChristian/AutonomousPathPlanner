@@ -23,6 +23,9 @@ int main() {
                   << plan.trajectory[i].x << ", " << plan.trajectory[i].y << ")\n";
     }
     std::cout << "---------------------------------------------------------------\n";
+    std::cout << "Path length: " << plan.pathLength << " coordinate units\n";
+    std::cout << "Minimum obstacle clearance: " << plan.minimumClearance << " coordinate units\n";
+    std::cout << "Evasive maneuvers: " << plan.evasiveManeuvers << '\n';
     if (!plan.reachedTarget()) {
         const char* reason = plan.terminationReason == TerminationReason::NoSafeStep
             ? "no collision-free next step"

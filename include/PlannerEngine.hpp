@@ -2,6 +2,7 @@
 #define PLANNER_ENGINE_HPP
 
 #include <cstddef>
+#include <limits>
 #include <vector>
 
 struct Position {
@@ -24,6 +25,9 @@ enum class TerminationReason {
 struct PlanResult {
     std::vector<Position> trajectory;
     TerminationReason terminationReason;
+    double pathLength{0.0};
+    double minimumClearance{std::numeric_limits<double>::infinity()};
+    std::size_t evasiveManeuvers{0};
 
     [[nodiscard]] bool reachedTarget() const noexcept {
         return terminationReason == TerminationReason::TargetReached;
@@ -47,6 +51,7 @@ private:
     std::vector<Position> obstacles;
 
     static void validatePosition(Position position, const char* fieldName);
+    [[nodiscard]] double segmentClearance(Position from, Position to) const;
     [[nodiscard]] bool isCollisionRisk(Position from, Position to) const;
 };
 

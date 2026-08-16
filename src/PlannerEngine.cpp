@@ -33,10 +33,11 @@ void PlannerEngine::validatePosition(Position position, const char* fieldName) {
     }
 }
 
-bool PlannerEngine::isCollisionRisk(Position from, Position to) const {
+double PlannerEngine::segmentClearance(Position from, Position to) const {
     const double segmentX = to.x - from.x;
     const double segmentY = to.y - from.y;
     const double segmentLengthSquared = segmentX * segmentX + segmentY * segmentY;
+    double minimumClearance = std::numeric_limits<double>::infinity();
 
     for (const auto& obs : obstacles) {
         double projection = 0.0;
@@ -51,11 +52,13 @@ bool PlannerEngine::isCollisionRisk(Position from, Position to) const {
             from.y + projection * segmentY
         };
         const double distance = std::hypot(closest.x - obs.x, closest.y - obs.y);
-        if (distance < config.safetyRadius) {
-            return true;
-        }
+        minimumClearance = std::min(minimumClearance, distance);
     }
-    return false;
+    return minimumClearance;
+}
+
+bool PlannerEngine::isCollisionRisk(Position from, Position to) const {
+    return segmentClearance(from, to) < config.safetyRadius;
 }
 
 PlanResult PlannerEngine::calculateSafeTrajectory() const {
@@ -80,6 +83,7 @@ PlanResult PlannerEngine::calculateSafeTrajectory() const {
                 current.y + (deltaY / distanceToTarget) * config.stepSize
             };
 
+        bool evasiveManeuver = false;
         if (isCollisionRisk(current, next)) {
             const Position leftDetour{
                 current.x - (deltaY / distanceToTarget) * config.stepSize,
@@ -111,8 +115,15 @@ PlanResult PlannerEngine::calculateSafeTrajectory() const {
             } else {
                 next = leftIsSafe ? leftDetour : rightDetour;
             }
+            evasiveManeuver = true;
         }
 
+        result.pathLength += std::hypot(next.x - current.x, next.y - current.y);
+        result.minimumClearance = std::min(
+            result.minimumClearance,
+            segmentClearance(current, next)
+        );
+        result.evasiveManeuvers += evasiveManeuver ? 1U : 0U;
         current = next;
         result.trajectory.push_back(current);
 
