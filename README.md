@@ -75,7 +75,7 @@ cmake --build build --parallel
 ctest --test-dir build --output-on-failure
 ```
 
-The suite covers direct completion, obstacle avoidance, occupied endpoints, safety clearance, metric correctness, waypoint tunneling, final-approach validation, safe-side selection, blocked scenarios, invalid input, deterministic reuse, and iteration-limit reporting. GitHub Actions builds and runs these checks on every push and pull request to `main`.
+The suite covers direct completion, single- and multi-obstacle avoidance, occupied endpoints, safety clearance, metric correctness, waypoint tunneling, final-approach validation, safe-side selection, blocked scenarios, invalid input, deterministic reuse, and iteration-limit reporting. GitHub Actions builds and runs these checks on every push and pull request to `main`.
 
 ## Configuration example
 

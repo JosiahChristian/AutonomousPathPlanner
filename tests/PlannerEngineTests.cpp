@@ -94,6 +94,19 @@ int main() {
             "occupied target should be reported explicitly"
         );
 
+        PlannerEngine multiObstacle({0.0, 0.0}, {0.0, 12.0}, {.maxIterations = 100});
+        multiObstacle.ingestObstacleMap({{0.0, 4.0}, {0.0, 8.0}});
+        const auto multiObstaclePlan = multiObstacle.calculateSafeTrajectory();
+        require(multiObstaclePlan.reachedTarget(), "multi-obstacle corridor should reach target");
+        require(
+            multiObstaclePlan.minimumClearance >= 1.5,
+            "multi-obstacle corridor should preserve configured clearance"
+        );
+        require(
+            multiObstaclePlan.evasiveManeuvers >= 2,
+            "multi-obstacle corridor should exercise repeated avoidance"
+        );
+
         PlannerEngine guardedEndpoint(
             {0.0, 0.0},
             {0.0, 0.5},
@@ -116,6 +129,29 @@ int main() {
             rejectedInvalidCoordinate = true;
         }
         require(rejectedInvalidCoordinate, "planner should reject non-finite coordinates");
+
+        bool rejectedInvalidObstacle = false;
+        try {
+            PlannerEngine invalidObstacle({0.0, 0.0}, {1.0, 1.0});
+            invalidObstacle.ingestObstacleMap({
+                {0.0, std::numeric_limits<double>::infinity()}
+            });
+        } catch (const std::invalid_argument&) {
+            rejectedInvalidObstacle = true;
+        }
+        require(rejectedInvalidObstacle, "planner should reject non-finite obstacles");
+
+        bool rejectedInvalidConfig = false;
+        try {
+            PlannerEngine invalidConfig(
+                {0.0, 0.0},
+                {1.0, 1.0},
+                {.stepSize = 0.0, .safetyRadius = 1.0, .maxIterations = 10}
+            );
+        } catch (const std::invalid_argument&) {
+            rejectedInvalidConfig = true;
+        }
+        require(rejectedInvalidConfig, "planner should reject invalid configuration");
 
         PlannerEngine limited({0.0, 0.0}, {0.0, 10.0}, {.stepSize = 1.0, .safetyRadius = 1.5, .maxIterations = 2});
         require(!limited.calculateSafeTrajectory().reachedTarget(), "limited plan should report incomplete termination");
