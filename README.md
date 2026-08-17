@@ -124,6 +124,6 @@ See [Architecture](docs/architecture.md) for component boundaries, invariants, a
 
 ## License
 
-This project is available under the [MIT License](LICENSE).
+This project is available under the [Apache License 2.0](LICENSE).
 
 Contributions are welcome through the workflow in [CONTRIBUTING.md](CONTRIBUTING.md). Potential vulnerabilities should be reported according to [SECURITY.md](SECURITY.md).
