@@ -19,7 +19,7 @@ jobs:
 
     steps:
     - name: Checkout Code Repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
     - name: Configure CMake
       run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON
@@ -40,7 +40,7 @@ jobs:
 
     steps:
     - name: Checkout Code Repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
     - name: Configure sanitizer build
       env:
