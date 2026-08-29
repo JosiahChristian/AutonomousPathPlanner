@@ -3,17 +3,20 @@
 
 #include <string_view>
 
-struct Position;
-
 enum class GateDecision {
     Accept,
     Veto
 };
 
+struct GatePoint {
+    double x;
+    double y;
+};
+
 struct StepProposal {
-    Position from;
-    Position to;
-    Position target;
+    GatePoint from;
+    GatePoint to;
+    GatePoint target;
     bool evasiveManeuver{false};
 };
 
