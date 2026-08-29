@@ -36,7 +36,18 @@
                     <h2>Executed Trajectory</h2>
                 </div>
 
-                <span class="stream-label">AUTONOMY-01</span>
+                <div class="trajectory-actions" aria-label="Simulation controls">
+                    <span class="stream-label">AUTONOMY-01</span>
+                    <button id="pause-button" class="control-button" type="button" aria-pressed="false">
+                        Pause
+                    </button>
+                    <button id="replay-button" class="control-button" type="button">
+                        Replay
+                    </button>
+                    <button id="reset-button" class="control-button control-button-secondary" type="button">
+                        Reset
+                    </button>
+                </div>
             </div>
 
             <canvas
