@@ -9,6 +9,9 @@ const distanceReadout = document.getElementById("distance-readout");
 const perceptionState = document.getElementById("perception-state");
 const planningState = document.getElementById("planning-state");
 const controlState = document.getElementById("control-state");
+const pauseButton = document.getElementById("pause-button");
+const replayButton = document.getElementById("replay-button");
+const resetButton = document.getElementById("reset-button");
 
 let waypoints = [
     { x: 0.0, y: 0.0 },
@@ -38,6 +41,34 @@ let currentWaypoint = 0;
 let progress = 0;
 let lastTimestamp = null;
 let missionComplete = false;
+let isPaused = false;
+let hasStarted = true;
+
+function updatePlaybackControls() {
+    if (!pauseButton) return;
+
+    pauseButton.textContent = isPaused ? "Resume" : "Pause";
+    pauseButton.setAttribute("aria-pressed", isPaused.toString());
+    pauseButton.disabled = missionComplete || !hasStarted;
+}
+
+function restartSimulation({ paused }) {
+    currentWaypoint = 0;
+    progress = 0;
+    missionComplete = false;
+    isPaused = paused;
+    hasStarted = !paused;
+    lastTimestamp = null;
+    updatePlaybackControls();
+}
+
+function togglePause() {
+    if (missionComplete || !hasStarted) return;
+
+    isPaused = !isPaused;
+    lastTimestamp = null;
+    updatePlaybackControls();
+}
 
 async function loadScenario() {
     try {
@@ -313,6 +344,10 @@ function updateTelemetry(vehiclePosition) {
     if (modeReadout) {
         if (missionComplete) {
             modeReadout.textContent = "MISSION COMPLETE";
+        } else if (!hasStarted) {
+            modeReadout.textContent = "READY";
+        } else if (isPaused) {
+            modeReadout.textContent = "PAUSED";
         } else if (hazardActive) {
             modeReadout.textContent = "EVASIVE REPLAN";
         } else if (currentWaypoint < 3) {
@@ -330,6 +365,10 @@ function updateTelemetry(vehiclePosition) {
         planningState.textContent =
             missionComplete
                 ? "COMPLETE"
+                : !hasStarted
+                ? "STANDBY"
+                : isPaused
+                ? "PAUSED"
                 : hazardActive
                 ? "REPLANNING"
                 : "ACTIVE";
@@ -339,6 +378,10 @@ function updateTelemetry(vehiclePosition) {
         controlState.textContent =
             missionComplete
                 ? "COMPLETE"
+                : !hasStarted
+                ? "STANDBY"
+                : isPaused
+                ? "PAUSED"
                 : currentWaypoint > 0
                 ? "EXECUTING"
                 : "STANDBY";
@@ -346,7 +389,7 @@ function updateTelemetry(vehiclePosition) {
 }
 
 function advanceSimulation(deltaSeconds) {
-    if (missionComplete) return;
+    if (missionComplete || isPaused || !hasStarted) return;
 
     progress += deltaSeconds * 0.65;
 
@@ -358,6 +401,7 @@ function advanceSimulation(deltaSeconds) {
             currentWaypoint = waypoints.length - 1;
             progress = 0;
             missionComplete = true;
+            updatePlaybackControls();
         }
     }
 }
@@ -429,6 +473,10 @@ if (canvas && ctx) {
         "resize",
         resizeCanvas
     );
+
+    pauseButton?.addEventListener("click", togglePause);
+    replayButton?.addEventListener("click", () => restartSimulation({ paused: false }));
+    resetButton?.addEventListener("click", () => restartSimulation({ paused: true }));
 
     loadScenario().finally(() => requestAnimationFrame(render));
 }
