@@ -4,9 +4,18 @@
 #include <cmath>
 #include <stdexcept>
 #include <string>
+#include <utility>
 
-PlannerEngine::PlannerEngine(Position start, Position target, PlannerConfig plannerConfig)
-    : startPos(start), targetPos(target), config(plannerConfig) {
+PlannerEngine::PlannerEngine(
+    Position start,
+    Position target,
+    PlannerConfig plannerConfig,
+    std::shared_ptr<const DecisionGate> decisionGate
+)
+    : startPos(start),
+      targetPos(target),
+      config(plannerConfig),
+      gate(std::move(decisionGate)) {
     validatePosition(startPos, "start");
     validatePosition(targetPos, "target");
     if (!std::isfinite(config.stepSize) || config.stepSize <= 0.0) {
@@ -126,6 +135,20 @@ PlanResult PlannerEngine::calculateSafeTrajectory() const {
                 next = leftIsSafe ? leftDetour : rightDetour;
             }
             evasiveManeuver = true;
+        }
+
+        if (gate) {
+            const StepProposal proposal{
+                .from = {current.x, current.y},
+                .to = {next.x, next.y},
+                .target = {targetPos.x, targetPos.y},
+                .evasiveManeuver = evasiveManeuver
+            };
+            if (gate->evaluate(proposal) == GateDecision::Veto) {
+                result.terminationReason = TerminationReason::GateVeto;
+                result.gateVetoes += 1;
+                return result;
+            }
         }
 
         result.pathLength += std::hypot(next.x - current.x, next.y - current.y);
