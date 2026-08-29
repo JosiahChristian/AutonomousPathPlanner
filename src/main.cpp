@@ -16,6 +16,8 @@ const char* terminationName(TerminationReason reason) {
         return "target_in_collision";
     case TerminationReason::NoSafeStep:
         return "no_safe_step";
+    case TerminationReason::GateVeto:
+        return "gate_veto";
     case TerminationReason::IterationLimitReached:
         return "iteration_limit_reached";
     }
@@ -34,6 +36,7 @@ void writeJson(const PlanResult& plan) {
         std::cout << "null";
     }
     std::cout << ",\n    \"evasiveManeuvers\": " << plan.evasiveManeuvers
+              << ",\n    \"gateVetoes\": " << plan.gateVetoes
               << "\n  },\n  \"obstacles\": [{\"x\": 0, \"y\": 4}],\n"
               << "  \"trajectory\": [\n";
     for (std::size_t index = 0; index < plan.trajectory.size(); ++index) {
@@ -77,6 +80,7 @@ int main(int argc, char* argv[]) {
     std::cout << "Path length: " << plan.pathLength << " coordinate units\n";
     std::cout << "Minimum obstacle clearance: " << plan.minimumClearance << " coordinate units\n";
     std::cout << "Evasive maneuvers: " << plan.evasiveManeuvers << '\n';
+    std::cout << "Decision-gate vetoes: " << plan.gateVetoes << '\n';
     if (!plan.reachedTarget()) {
         const char* reason = terminationName(plan.terminationReason);
         std::cerr << "Planner stopped before reaching the target: " << reason << ".\n";
