@@ -3,7 +3,8 @@
   "metrics": {
     "pathLength": 13.2051467655049,
     "minimumClearance": 1.5031322545362,
-    "evasiveManeuvers": 3
+    "evasiveManeuvers": 3,
+    "gateVetoes": 0
   },
   "obstacles": [{"x": 0, "y": 4}],
   "trajectory": [
