@@ -1,8 +1,11 @@
 #ifndef PLANNER_ENGINE_HPP
 #define PLANNER_ENGINE_HPP
 
+#include "DecisionGate.hpp"
+
 #include <cstddef>
 #include <limits>
+#include <memory>
 #include <vector>
 
 struct Position {
@@ -21,6 +24,7 @@ enum class TerminationReason {
     StartInCollision,
     TargetInCollision,
     NoSafeStep,
+    GateVeto,
     IterationLimitReached
 };
 
@@ -30,6 +34,7 @@ struct PlanResult {
     double pathLength{0.0};
     double minimumClearance{std::numeric_limits<double>::infinity()};
     std::size_t evasiveManeuvers{0};
+    std::size_t gateVetoes{0};
 
     [[nodiscard]] bool reachedTarget() const noexcept {
         return terminationReason == TerminationReason::TargetReached;
@@ -38,7 +43,12 @@ struct PlanResult {
 
 class PlannerEngine {
 public:
-    PlannerEngine(Position start, Position target, PlannerConfig config = {});
+    PlannerEngine(
+        Position start,
+        Position target,
+        PlannerConfig config = {},
+        std::shared_ptr<const DecisionGate> decisionGate = {}
+    );
     
     // Ingests lidar/sonar sensor feeds (Perception Stage)
     void ingestObstacleMap(const std::vector<Position>& detectedObstacles);
@@ -51,6 +61,7 @@ private:
     Position targetPos;
     PlannerConfig config;
     std::vector<Position> obstacles;
+    std::shared_ptr<const DecisionGate> gate;
 
     static void validatePosition(Position position, const char* fieldName);
     [[nodiscard]] double segmentClearance(Position from, Position to) const;

@@ -26,6 +26,12 @@ if(BUILD_TESTING)
     target_link_libraries(planner_tests PRIVATE planner_engine)
     enable_project_warnings(planner_tests)
     add_test(NAME planner_engine_tests COMMAND planner_tests)
+
+    add_executable(decision_gate_tests tests/DecisionGateTests.cpp)
+    target_link_libraries(decision_gate_tests PRIVATE planner_engine)
+    enable_project_warnings(decision_gate_tests)
+    add_test(NAME decision_gate_tests COMMAND decision_gate_tests)
+
     add_test(NAME planner_json_output COMMAND run_planner --json)
     set_tests_properties(planner_json_output PROPERTIES
         PASS_REGULAR_EXPRESSION "\"status\": \"target_reached\""
